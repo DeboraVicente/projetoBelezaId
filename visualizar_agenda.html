@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="admin_dashboard.html">Home</a></li>
+                <li><a href="cadastro_funcionario.html">Cadastro de Funcionários</a></li>
+                <li><a href="cadastro_procedimento.html">Cadastro de Procedimentos</a></li>
+                <li><a href="relatorios.html">Relatórios</a></li>
+                <li><a href="visualizar_agenda.html">Visualizar Agenda</a></li>
+                <li><a href="login.html">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Agenda de Agendamentos</h1>
+        <section id="agendaList">
+            <table id="agendaTable">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Cliente</th>
+                        <th>Telefone</th>
+                        <th>Procedimento</th>
+                        <th>Pagamento</th>
+                        <th>Deficiência</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- As linhas de agendamentos serão inseridas aqui -->
+                </tbody>
+        </section>  
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
+<script>
+    // Função para renderizar a tabela de agendamentos
+    function renderizarTabela() {
+        const tabela = document.getElementById('agendaTable').getElementsByTagName('tbody')[0];
+        tabela.innerHTML = ''; // Limpa a tabela
+        let dataAtual = ''; // Armazena a data atual para criar cabeçalhos
+
+        agenda.forEach((agendamento, index) => {
+            // Adiciona uma nova linha apenas se a data for diferente da última
+            if (agendamento.data !== dataAtual) {
+                dataAtual = agendamento.data;
+                const headerRow = document.createElement('tr');
+                const headerCell = document.createElement('td');
+                headerCell.colSpan = 8; // Mescla todas as colunas para o cabeçalho de data
+                headerCell.innerHTML = `<strong>${dataAtual}</strong>`;
+                headerRow.appendChild(headerCell);
+                tabela.appendChild(headerRow);
+            }
+
+            // Cria a linha para o agendamento
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${agendamento.data}</td>
+                <td>${agendamento.hora}</td>
+                <td>${agendamento.cliente}</td>
+                <td>${agendamento.telefone}</td>
+                <td>${agendamento.procedimento}</td>
+                <td>${agendamento.formaPagamento}</td>
+                <td>${agendamento.deficiencia ? 'Sim' : 'Não'}</td>
+                <td><button class="excluir-btn" data-index="${index}">Excluir</button></td>
+            `;
+            tabela.appendChild(row);
+        });
+
+        // Adiciona eventos de clique para cada botão excluir
+        document.querySelectorAll('.excluir-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                excluirAgendamento(index);
+            });
+        });
+    }
+</script>

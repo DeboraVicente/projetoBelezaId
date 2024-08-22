@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="procedimentos.html">Ver Procedimentos</a></li>
+                <li><a href="funcionarios.html">Ver Funcionários</a></li>
+                <li><a href="login.html">Entrar</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Funcionários</h1>
+        <section id="funcionariosList">
+            <table id="funcionariosTable">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Horários</th>
+                    </tr>
+                </thead>
+                <tbody id="funcionariosTbody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+
+</html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+        const tbody = document.getElementById('funcionariosTbody');
+        tbody.innerHTML = '';
+        funcionarios.forEach(funcionario => {
+            const tr = document.createElement('tr');
+            const tdNome = document.createElement('td');
+            tdNome.textContent = funcionario.nome;
+            const tdCargo = document.createElement('td');
+            tdCargo.textContent = funcionario.cargo;
+            const tdHorarios = document.createElement('td');
+            tdHorarios.textContent = `${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}`;
+            tr.appendChild(tdNome);
+            tr.appendChild(tdCargo);
+            tr.appendChild(tdHorarios);
+            tbody.appendChild(tr);
+        });
+    });
+</script>

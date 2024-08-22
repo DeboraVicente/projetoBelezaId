@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="procedimentos.html">Ver Procedimentos</a></li>
+                <li><a href="funcionarios.html">Ver Funcionários</a></li>
+                <li><a href="login.html">Entrar</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Procedimentos Disponíveis</h1>
+        <section id="procedimentosList">
+            <table id="procedimentosTable">
+                <thead>
+                    <tr>
+                        <th>Procedimento</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+                <tbody id="procedimentosTbody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
+    const tbody = document.getElementById('procedimentosTbody');
+    tbody.innerHTML = '';
+    procedimentos.forEach(procedimento => {
+        const tr = document.createElement('tr');
+        const tdNome = document.createElement('td');
+        tdNome.textContent = procedimento.nome;
+        const tdPreco = document.createElement('td');
+        tdPreco.textContent = `R$ ${procedimento.preco}`;
+        tr.appendChild(tdNome);
+        tr.appendChild(tdPreco);
+        tbody.appendChild(tr);
+    });
+});
+</script>

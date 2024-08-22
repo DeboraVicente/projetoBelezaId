@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="admin_dashboard.html">Home</a></li>
+                <li><a href="cadastro_funcionario.html">Cadastro de Funcionários</a></li>
+                <li><a href="cadastro_procedimento.html">Cadastro de Procedimentos</a></li>
+                <li><a href="relatorios.html">Relatórios</a></li>
+                <li><a href="visualizar_agenda.html">Visualizar Agenda</a></li>
+                <li><a href="login.html">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form id="funcionarioForm">
+            <h1>Cadastro de Funcionários</h1>
+            <input type="hidden" id="editIndex">
+
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="telefone">Telefone</label>
+            <input type="tel" id="telefone" name="telefone" required>
+
+            <label for="cargo">Cargo</label>
+            <input type="text" id="cargo" name="cargo" required>
+
+            <label for="horario1">Horário de Trabalho (Turno 1)</label>
+            <input type="text" id="horario1" name="horario1" required>
+
+            <label for="horario2">Horário de Trabalho (Turno 2 - opcional)</label>
+            <input type="text" id="horario2" name="horario2">
+
+            <input type="submit" value="Cadastrar Funcionário">
+        </form>
+
+        <h2>Funcionários Cadastrados</h2>
+        <table id="funcionariosTable">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Cargo</th>
+                    <th>Horários</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+
+</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('funcionarioForm');
+        const tabela = document.getElementById('funcionariosTable').querySelector('tbody');
+        let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+
+        function renderTabela() {
+            tabela.innerHTML = '';
+            funcionarios.forEach((funcionario, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${funcionario.nome}</td>
+                    <td>${funcionario.telefone}</td>
+                    <td>${funcionario.cargo}</td>
+                    <td>${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}</td>
+                    <td class="acoes">
+                        <button onclick="editarFuncionario(${index})">Editar</button>
+                        <button onclick="removerFuncionario(${index})">Remover</button>
+                    </td>
+                `;
+                tabela.appendChild(row);
+            });
+        }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const editIndex = document.getElementById('editIndex').value;
+            const funcionario = {
+                nome: document.getElementById('nome').value,
+                telefone: document.getElementById('telefone').value,
+                cargo: document.getElementById('cargo').value,
+                horario1: document.getElementById('horario1').value,
+                horario2: document.getElementById('horario2').value
+            };
+
+            if (editIndex === '') {
+                funcionarios.push(funcionario);
+            } else {
+                funcionarios[editIndex] = funcionario;
+                document.getElementById('editIndex').value = '';
+            }
+
+            localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+            form.reset();
+            renderTabela();
+            alert('Funcionário cadastrado ou atualizado com sucesso!');
+        });
+
+        window.editarFuncionario = function (index) {
+            const funcionario = funcionarios[index];
+            document.getElementById('nome').value = funcionario.nome;
+            document.getElementById('telefone').value = funcionario.telefone;
+            document.getElementById('cargo').value = funcionario.cargo;
+            document.getElementById('horario1').value = funcionario.horario1;
+            document.getElementById('horario2').value = funcionario.horario2;
+            document.getElementById('editIndex').value = index;
+        };
+
+        window.removerFuncionario = function (index) {
+            if (confirm('Tem certeza que deseja remover este funcionário?')) {
+                funcionarios.splice(index, 1);
+                localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
+                renderTabela();
+            }
+        };
+
+        renderTabela();
+    });
+</script>

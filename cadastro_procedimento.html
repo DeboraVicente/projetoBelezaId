@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="admin_dashboard.html">Home</a></li>
+                <li><a href="cadastro_funcionario.html">Cadastro de Funcionários</a></li>
+                <li><a href="cadastro_procedimento.html">Cadastro de Procedimentos</a></li>
+                <li><a href="relatorios.html">Relatórios</a></li>
+                <li><a href="visualizar_agenda.html">Visualizar Agenda</a></li>
+                <li><a href="login.html">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form id="procedimentoForm">
+            <h1>Cadastro de Procedimentos</h1>
+            <label for="procedimento">Nome do Procedimento</label>
+            <input type="text" id="procedimento" name="procedimento" required>
+
+            <label for="preco">Preço</label>
+            <input type="text" id="preco" name="preco" required>
+
+            <input type="submit" value="Cadastrar Procedimento">
+        </form>
+
+        <section id="procedimentosList">
+            <h2>Procedimentos Cadastrados</h2>
+            <table id="procedimentosTable">
+                <thead>
+                    <tr>
+                        <th>Procedimento</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+                <tbody id="procedimentosTbody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+
+</html>
+
+<script>
+    document.getElementById('procedimentoForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const procedimento = {
+            nome: document.getElementById('procedimento').value,
+            preco: document.getElementById('preco').value
+        };
+        let procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
+        procedimentos.push(procedimento);
+        localStorage.setItem('procedimentos', JSON.stringify(procedimentos));
+        alert('Procedimento cadastrado com sucesso!');
+        document.getElementById('procedimentoForm').reset();
+        listarProcedimentos();
+    });
+
+    function listarProcedimentos() {
+        const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
+        const tbody = document.getElementById('procedimentosTbody');
+        tbody.innerHTML = '';
+        procedimentos.forEach(procedimento => {
+            const tr = document.createElement('tr');
+            const tdNome = document.createElement('td');
+            tdNome.textContent = procedimento.nome;
+            const tdPreco = document.createElement('td');
+            tdPreco.textContent = `R$${procedimento.preco}`;
+            tr.appendChild(tdNome);
+            tr.appendChild(tdPreco);
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Carregar a lista de procedimentos ao carregar a página
+    window.onload = listarProcedimentos;
+</script>

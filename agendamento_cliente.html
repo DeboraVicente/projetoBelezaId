@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salão de Beleza</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="procedimentos.html">Ver Procedimentos</a></li>
+                <li><a href="funcionarios.html">Ver Funcionários</a></li>
+                <li><a href="agendamento_cliente.html">Agendar Procedimento</a></li>
+                <li><a href="login.html">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <form id="agendamentoForm">
+            <h1>Agendar Procedimento</h1>
+            <aria-label for="cliente">Nome do Cliente</aria-label>
+            <input type="text" id="cliente" name="cliente" required>
+            
+            <aria-label for="telefone">Telefone</aria-label>
+            <input type="tel" id="telefone" name="telefone" required>
+            
+            <aria-label for="data">Data</aria-label>
+            <input type="date" id="data" name="data" required>
+            
+            <aria-label for="hora">Hora</aria-label>
+            <input type="time" id="hora" name="hora" required>
+            
+            <aria-label for="procedimento">Procedimento</aria-label>
+            <select id="procedimento" name="procedimento" required></select>
+
+            <aria-label for="deficiencia">Possui deficiencia?</aria-label>
+            </br>
+            <input type="radio" id="deficienciaSim" name="deficienciaSim" value="sim">Sim
+            <input type="radio" id="deficienciaNao" name="deficienciaNao" value="nao">Não
+            </br>
+            <input type="text" id="descricaoDeficiencia" name="descricaoDeficiencia" placeholder="Descreva a deficiencia" required>
+            </br>
+
+            <aria-label for="formaPagamento">Forma de Pagamento</aria-label>
+            <select id="formaPagamento" name="formaPagamento" required>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+            </select>
+
+            <input type="submit" value="Agendar">
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
+    const procedimentoSelect = document.getElementById('procedimento');
+    procedimentos.forEach(proc => {
+        const option = document.createElement('option');
+        option.value = proc.nome;
+        option.textContent = `${proc.nome} - R$ ${proc.preco}`;
+        procedimentoSelect.appendChild(option);
+    });
+});
+
+document.getElementById('agendamentoForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const cliente = document.getElementById('cliente').value;
+    const telefone = document.getElementById('telefone').value;
+    const data = document.getElementById('data').value;
+    const hora = document.getElementById('hora').value;
+    const procedimento = document.getElementById('procedimento').value;
+    const descricaoDeficiencia =  document.getElementById('descricaoDeficiencia').value;
+    const formaPagamento = document.getElementById('formaPagamento').value;
+    
+    const agendamento = {
+        cliente,
+        telefone,
+        data,
+        hora,
+        procedimento,
+        descricaoDeficiencia,
+        formaPagamento,
+        criadoEm: new Date().toISOString() 
+    };
+    
+    let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+    agenda.push(agendamento);
+    localStorage.setItem('agenda', JSON.stringify(agenda));
+    
+    alert('Agendamento salvo com sucesso!');
+});
+
+const deficienciaSim = document.getElementById('deficienciaSim');
+const deficienciaNao = document.getElementById('deficienciaNao');
+const descricaoDeficiencia = document.getElementById('descricaoDeficiencia');
+
+function verificarDeficiencia() {
+    if (deficienciaSim.checked) {
+      descricaoDeficiencia.style.display = 'block';
+      descricaoDeficiencia.setAttribute('required', 'required'); // Torna o campo obrigatório
+    } else {
+      descricaoDeficiencia.style.display = 'none';
+      descricaoDeficiencia.removeAttribute('required'); // Remove a obrigatoriedade
+      descricaoDeficiencia.value = ''; // Limpa o campo
+    }
+}
+
+  // Adiciona eventos de mudança
+deficienciaSim.addEventListener('change', verificarDeficiencia);
+deficienciaNao.addEventListener('change', verificarDeficiencia);
+
+
+</script>
