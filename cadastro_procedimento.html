@@ -13,7 +13,7 @@
     <header>
         <nav>
             <ul>
-                <li><a href="admin_dashboard.html">Home</a></li>
+                <li><a href="admin_dashboard.html">Home ADM</a></li>
                 <li><a href="cadastro_funcionario.html">Cadastro de Funcionários</a></li>
                 <li><a href="cadastro_procedimento.html">Cadastro de Procedimentos</a></li>
                 <li><a href="relatorios.html">Relatórios</a></li>
@@ -110,11 +110,9 @@
         document.getElementById('procedimento').value = procedimento.nome;
         document.getElementById('preco').value = procedimento.preco;
 
-        // Remover o procedimento da lista temporariamente
         procedimentos.splice(index, 1);
         localStorage.setItem('procedimentos', JSON.stringify(procedimentos));
 
-        // Atualizar a lista na interface
         listarProcedimentos();
     }
 
@@ -127,6 +125,5 @@
         }
     }
 
-    // Carregar a lista de procedimentos ao carregar a página
     window.onload = listarProcedimentos;
 </script>

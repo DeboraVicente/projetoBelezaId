@@ -12,8 +12,7 @@
     <header>
         <nav>
             <ul>
-                <li><a href="procedimentos.html">Ver Procedimentos</a></li>
-                <li><a href="funcionarios.html">Ver Funcionários</a></li>
+                <li><a href="belezaID.html">Home</a></li>
                 <li><a href="agendamento_cliente.html">Agendar Procedimento</a></li>
                 <li><a href="login.html">Sair</a></li>
             </ul>
@@ -126,11 +125,11 @@
     function verificarDeficiencia() {
         if (deficienciaSim.checked) {
             descricaoDeficiencia.style.display = 'block';
-            descricaoDeficiencia.setAttribute('required', 'required'); // Torna o campo obrigatório
+            descricaoDeficiencia.setAttribute('required', 'required');
         } else {
             descricaoDeficiencia.style.display = 'none';
-            descricaoDeficiencia.removeAttribute('required'); // Remove a obrigatoriedade
-            descricaoDeficiencia.value = ''; // Limpa o campo
+            descricaoDeficiencia.removeAttribute('required');
+            descricaoDeficiencia.value = ''; 
         }
     }
 
