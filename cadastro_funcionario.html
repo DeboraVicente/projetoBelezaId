@@ -65,6 +65,7 @@
 </body>
 
 </html>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('funcionarioForm');
@@ -81,8 +82,8 @@
                     <td>${funcionario.cargo}</td>
                     <td>${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}</td>
                     <td class="acoes">
-                        <button class="confirmar-btn" onclick="editarFuncionario(${index})">Editar</button>
-                        <button class="excluir-btn" onclick="removerFuncionario(${index})">Remover</button>
+                        <button class="btn btn-edit" onclick="editarFuncionario(${index})">Editar</button>
+                        <button class="btn btn-delete" onclick="removerFuncionario(${index})">Remover</button>
                     </td>
                 `;
                 tabela.appendChild(row);

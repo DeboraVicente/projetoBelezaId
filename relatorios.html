@@ -97,9 +97,11 @@
                 const tdAcoes = document.createElement('td');
                 const btnEdit = document.createElement('button');
                 btnEdit.textContent = 'Editar';
+                btnEdit.classList.add('acoes', 'btn');
                 btnEdit.addEventListener('click', () => editRelatorio(index));
                 const btnDelete = document.createElement('button');
                 btnDelete.textContent = 'Remover';
+                btnDelete.classList.add('acoes', 'btn');
                 btnDelete.addEventListener('click', () => deleteRelatorio(index));
 
                 tdAcoes.appendChild(btnEdit);
@@ -126,8 +128,10 @@
         }
 
         function deleteRelatorio(index) {
-            relatorios.splice(index, 1);
-            renderRelatorios();
+            if (confirm('Tem certeza que deseja remover este pagamento?')) {
+                relatorios.splice(index, 1);
+                renderRelatorios();
+            }
         }
 
         form.addEventListener('submit', function (e) {

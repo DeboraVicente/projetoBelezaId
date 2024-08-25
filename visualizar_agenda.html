@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salão de Beleza</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -40,7 +42,7 @@
                     <!-- As linhas de agendamentos serão inseridas aqui -->
                 </tbody>
             </table>
-        </section>  
+        </section>
     </main>
 
     <footer>
@@ -66,23 +68,25 @@
                     <td>${agendamento.funcionario}</td>
                     <td>${agendamento.formaPagamento}</td>
                     <td>${agendamento.deficiencia ? 'Sim' : 'Não'}</td>
-                    <td>
-                        <button class="confirmar-btn" data-index="${index}">Confirmar WhatsApp</button>
-                        <button class="excluir-btn" data-index="${index}">Remover</button>
+                    <td class="acoes">
+                        <button class="btn" data-index="${index}">Confirmar</button>
+                        <button class="btn" data-index="${index}">Remover</button>
                     </td>
                 `;
                 tabela.appendChild(row);
             });
 
             document.querySelectorAll('.excluir-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const index = this.getAttribute('data-index');
-                    excluirAgendamento(index);
-                });
+                if (confirm('Tem certeza que deseja remover este agendamento?')) {
+                    button.addEventListener('click', function () {
+                        const index = this.getAttribute('data-index');
+                        excluirAgendamento(index);
+                    });
+                }
             });
 
             document.querySelectorAll('.confirmar-btn').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const index = this.getAttribute('data-index');
                     confirmarPorWhatsApp(index);
                 });
@@ -107,4 +111,5 @@
         document.addEventListener('DOMContentLoaded', renderizarTabela);
     </script>
 </body>
+
 </html>

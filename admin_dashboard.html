@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salão de Beleza</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -22,7 +24,7 @@
     <main>
         <h2>Notificações</h2>
         <p id="notificacoes"></p>
-    
+
         <h2>Avisos</h2>
         <div id="avisos"></div>
     </main>
@@ -31,47 +33,48 @@
         <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
     </footer>
 </body>
+
 </html>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+    document.addEventListener('DOMContentLoaded', function () {
+        const agenda = JSON.parse(localStorage.getItem('agenda')) || [];
 
-    const notificacoes = document.getElementById('notificacoes');
-    const novosAgendamentos = agenda.filter(agendamento => {
-        const criadoEm = new Date(agendamento.criadoEm);
-        const agora = new Date();
-        return (agora - criadoEm) < 86400000; 
-    });
+        const notificacoes = document.getElementById('notificacoes');
+        const novosAgendamentos = agenda.filter(agendamento => {
+            const criadoEm = new Date(agendamento.criadoEm);
+            const agora = new Date();
+            return (agora - criadoEm) < 86400000;
+        });
 
-    if (novosAgendamentos.length > 0) {
-        notificacoes.textContent = `Você tem ${novosAgendamentos.length} novos agendamentos.`;
-    } else {
-        notificacoes.textContent = 'Nenhum novo agendamento nas últimas 24 horas.';
-    }
+        if (novosAgendamentos.length > 0) {
+            notificacoes.textContent = `Você tem ${novosAgendamentos.length} novos agendamentos.`;
+        } else {
+            notificacoes.textContent = 'Nenhum novo agendamento nas últimas 24 horas.';
+        }
 
-    const avisos = document.getElementById('avisos');
-    const amanha = new Date();
-    amanha.setDate(amanha.getDate() + 1); 
+        const avisos = document.getElementById('avisos');
+        const amanha = new Date();
+        amanha.setDate(amanha.getDate() + 1);
 
-    const agendamentosAmanha = agenda.filter(agendamento => {
-        const dataAgendada = new Date(agendamento.data);
-        return dataAgendada.toDateString() === amanha.toDateString();
-    });
+        const agendamentosAmanha = agenda.filter(agendamento => {
+            const dataAgendada = new Date(agendamento.data);
+            return dataAgendada.toDateString() === amanha.toDateString();
+        });
 
-    if (agendamentosAmanha.length > 0) {
-        avisos.innerHTML = `
+        if (agendamentosAmanha.length > 0) {
+            avisos.innerHTML = `
             <p>Você tem ${agendamentosAmanha.length} agendamentos para amanhã. Não se esqueça de enviar mensagens de confirmação!</p>
             <button id="enviarMensagem">Enviar mensagem</button>
         `;
 
-        document.getElementById('enviarMensagem').addEventListener('click', function() {
-            agendamentosAmanha.forEach(agendamento => {
-                const mensagem = `Olá ${agendamento.cliente}, estamos confirmando seu agendamento para ${agendamento.data} às ${agendamento.hora}.`;
-                const whatsappURL = `https://wa.me/55${agendamento.telefone}?text=${encodeURIComponent(mensagem)}`;
-                window.open(whatsappURL, '_blank');
+            document.getElementById('enviarMensagem').addEventListener('click', function () {
+                agendamentosAmanha.forEach(agendamento => {
+                    const mensagem = `Olá ${agendamento.cliente}, estamos confirmando seu agendamento para ${agendamento.data} às ${agendamento.hora}.`;
+                    const whatsappURL = `https://wa.me/55${agendamento.telefone}?text=${encodeURIComponent(mensagem)}`;
+                    window.open(whatsappURL, '_blank');
+                });
             });
-        });
-    }
-});
+        }
+    });
 </script>
