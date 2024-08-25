@@ -35,6 +35,9 @@
             <aria-label for="procedimento">Procedimento</aria-label>
             <select id="procedimento" name="procedimento" required></select>
 
+            <aria-label for="funcionario">Funcionário</aria-label>
+            <select id="funcionario" name="funcionario" required></select>
+
             <aria-label for="deficiencia">Possui deficiencia?</aria-label>
             </br>
             <input type="radio" id="deficienciaSim" name="deficienciaSim" value="sim">Sim
@@ -45,8 +48,10 @@
 
             <aria-label for="formaPagamento">Forma de Pagamento</aria-label>
             <select id="formaPagamento" name="formaPagamento" required>
-                <option value="cartao">Cartão</option>
+                <option value="cartao">Cartão Débito</option>
+                <option value="credito">Cartão Crédito</option>
                 <option value="dinheiro">Dinheiro</option>
+                <option value="pix">Pix</option>
             </select>
 
             <input type="submit" value="Agendar">
@@ -69,6 +74,14 @@ document.addEventListener('DOMContentLoaded', function() {
         option.textContent = `${proc.nome} - R$ ${proc.preco}`;
         procedimentoSelect.appendChild(option);
     });
+    const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
+    const funcionarioSelect = document.getElementById('funcionario');
+    funcionarios.forEach(func => {
+        const option = document.createElement('option');
+        option.value = func.nome;
+        option.textContent = func.nome;
+        funcionarioSelect.appendChild(option);
+    });
 });
 
 document.getElementById('agendamentoForm').addEventListener('submit', function(event) {
@@ -79,6 +92,7 @@ document.getElementById('agendamentoForm').addEventListener('submit', function(e
     const data = document.getElementById('data').value;
     const hora = document.getElementById('hora').value;
     const procedimento = document.getElementById('procedimento').value;
+    const funcionario = document.getElementById('funcionario').value;
     const descricaoDeficiencia =  document.getElementById('descricaoDeficiencia').value;
     const formaPagamento = document.getElementById('formaPagamento').value;
     
@@ -88,6 +102,7 @@ document.getElementById('agendamentoForm').addEventListener('submit', function(e
         data,
         hora,
         procedimento,
+        funcionario,
         descricaoDeficiencia,
         formaPagamento,
         criadoEm: new Date().toISOString() 

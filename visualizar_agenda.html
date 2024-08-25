@@ -30,6 +30,7 @@
                         <th>Cliente</th>
                         <th>Telefone</th>
                         <th>Procedimento</th>
+                        <th>Funcionário</th>
                         <th>Pagamento</th>
                         <th>Deficiência</th>
                         <th>Ações</th>
@@ -38,54 +39,72 @@
                 <tbody>
                     <!-- As linhas de agendamentos serão inseridas aqui -->
                 </tbody>
+            </table>
         </section>  
     </main>
 
     <footer>
         <p>&copy; 2024 - Beleza ID. Todos os direitos reservados.</p>
     </footer>
+
+    <script>
+        let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+
+        function renderizarTabela() {
+            const tabela = document.getElementById('agendaTable').getElementsByTagName('tbody')[0];
+            tabela.innerHTML = ''; // Limpa a tabela
+
+            agenda.forEach((agendamento, index) => {
+                // Cria a linha para o agendamento
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${agendamento.data}</td>
+                    <td>${agendamento.hora}</td>
+                    <td>${agendamento.cliente}</td>
+                    <td>${agendamento.telefone}</td>
+                    <td>${agendamento.procedimento}</td>
+                    <td>${agendamento.funcionario}</td>
+                    <td>${agendamento.formaPagamento}</td>
+                    <td>${agendamento.deficiencia ? 'Sim' : 'Não'}</td>
+                    <td>
+                        <button class="confirmar-btn" data-index="${index}">Confirmar WhatsApp</button>
+                        <button class="excluir-btn" data-index="${index}">Excluir</button>
+                    </td>
+                `;
+                tabela.appendChild(row);
+            });
+
+            document.querySelectorAll('.excluir-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    excluirAgendamento(index);
+                });
+            });
+
+            document.querySelectorAll('.confirmar-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    confirmarPorWhatsApp(index);
+                });
+            });
+
+        }
+
+        function excluirAgendamento(index) {
+            agenda.splice(index, 1);
+            localStorage.setItem('agenda', JSON.stringify(agenda));
+            renderizarTabela();
+        }
+
+        function confirmarPorWhatsApp(index) {
+            const agendamento = agenda[index];
+            const telefone = agendamento.telefone.replace(/\D/g, ''); // Remove caracteres não numéricos
+            const mensagem = `Olá ${agendamento.cliente}, estamos confirmando seu agendamento para ${agendamento.data} às ${agendamento.hora}.`;
+            const url = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
+            window.open(url, '_blank');
+        }
+
+        document.addEventListener('DOMContentLoaded', renderizarTabela);
+    </script>
 </body>
 </html>
-<script>
-    // Função para renderizar a tabela de agendamentos
-    function renderizarTabela() {
-        const tabela = document.getElementById('agendaTable').getElementsByTagName('tbody')[0];
-        tabela.innerHTML = ''; // Limpa a tabela
-        let dataAtual = ''; // Armazena a data atual para criar cabeçalhos
-
-        agenda.forEach((agendamento, index) => {
-            // Adiciona uma nova linha apenas se a data for diferente da última
-            if (agendamento.data !== dataAtual) {
-                dataAtual = agendamento.data;
-                const headerRow = document.createElement('tr');
-                const headerCell = document.createElement('td');
-                headerCell.colSpan = 8; // Mescla todas as colunas para o cabeçalho de data
-                headerCell.innerHTML = `<strong>${dataAtual}</strong>`;
-                headerRow.appendChild(headerCell);
-                tabela.appendChild(headerRow);
-            }
-
-            // Cria a linha para o agendamento
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${agendamento.data}</td>
-                <td>${agendamento.hora}</td>
-                <td>${agendamento.cliente}</td>
-                <td>${agendamento.telefone}</td>
-                <td>${agendamento.procedimento}</td>
-                <td>${agendamento.formaPagamento}</td>
-                <td>${agendamento.deficiencia ? 'Sim' : 'Não'}</td>
-                <td><button class="excluir-btn" data-index="${index}">Excluir</button></td>
-            `;
-            tabela.appendChild(row);
-        });
-
-        // Adiciona eventos de clique para cada botão excluir
-        document.querySelectorAll('.excluir-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const index = this.getAttribute('data-index');
-                excluirAgendamento(index);
-            });
-        });
-    }
-</script>

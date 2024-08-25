@@ -33,16 +33,47 @@ nav ul li a {
 nav ul li a:hover {
     text-decoration: underline;
 }
+/* Estilo da Tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
 
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table tr:hover {
+    background-color: #ddd;
+}
+
+table th {
+    background-color: #6a1b9a;
+    color: white;
+    text-align: center;
+}
+
+table th {
+    text-align: center;
+    padding: 10px;
+}
 
 /* Estilos do rodapé */
 footer {
     background-color: #6a1b9a; /* Mesma cor do cabeçalho */
     color: white;
     text-align: center;
-    padding: 5px 0;
+    padding: 10px 0;
     bottom: 0;
     width: 100%;
+    margin-top: auto;
 }
 
 footer p {
