@@ -81,8 +81,8 @@
                     <td>${funcionario.cargo}</td>
                     <td>${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}</td>
                     <td class="acoes">
-                        <button onclick="editarFuncionario(${index})">Editar</button>
-                        <button onclick="removerFuncionario(${index})">Remover</button>
+                        <button class="confirmar-btn" onclick="editarFuncionario(${index})">Editar</button>
+                        <button class="excluir-btn" onclick="removerFuncionario(${index})">Remover</button>
                     </td>
                 `;
                 tabela.appendChild(row);

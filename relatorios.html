@@ -26,15 +26,17 @@
         <form id="relatoriosForm">
             <h1>Relatórios</h1>
             <input type="hidden" id="editIndex">
-            <aria-label for="nome">Nome:</aria-label>
+            <aria-label for="data">Data:</aria-label>
+            <input type="date" id="data" name="data" required>
+            <aria-label for="nome">Descrição:</aria-label>
             <input type="text" id="nome" name="nome" required>
             <aria-label for="valor">Valor:</aria-label>
             <input type="text" id="valor" name="valor" required>
-            </br>
             <aria-label for="formaPagamento">Forma de Pagamento:</aria-label>
             <select id="formaPagamento" name="formaPagamento" required>
+                <option value="cartao">Cartão Débito</option>
+                <option value="credito">Cartão Crédito</option>
                 <option value="dinheiro">Dinheiro</option>
-                <option value="cartao">Cartão</option>
                 <option value="pix">Pix</option>
             </select>
             <aria-label for="tipo">Tipo:</aria-label>
@@ -42,7 +44,7 @@
                 <option value="entrada">Entrada</option>
                 <option value="saida">Saída</option>
             </select>
-            <button type="submit">Adicionar</button>
+            <input type="submit"></input>
         </form>
 
         <h2>Fluxo de caixa </h2>
@@ -50,10 +52,12 @@
             <table id="relatoriosTable">
                 <thead>
                     <tr>
-                        <th>Nome</th>
+                        <th>Data</th>
+                        <th>Descrição</th>
                         <th>Valor</th>
                         <th>Forma de Pagamento</th>
                         <th>Tipo</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="relatoriosTbody"></tbody>
@@ -72,22 +76,82 @@
     document.addEventListener('DOMContentLoaded', function () {
         const relatorios = JSON.parse(localStorage.getItem('relatorios')) || [];
         const tbody = document.getElementById('relatoriosTbody');
-        tbody.innerHTML = '';
-        relatorios.forEach(relatorio => {
-            const tr = document.createElement('tr');
-            const tdNome = document.createElement('td');
-            tdNome.textContent = relatorio.nome;
-            const tdValor = document.createElement('td');
-            tdValor.textContent = relatorio.valor;
-            const tdFormaPagamento = document.createElement('td');
-            tdFormaPagamento.textContent = relatorio.formaPagamento;
-            const tdTipo = document.createElement('td');
-            tdTipo.textContent = relatorio.tipo;
-            tr.appendChild(tdNome);
-            tr.appendChild(tdValor);
-            tr.appendChild(tdFormaPagamento);
-            tr.appendChild(tdTipo);
-            tbody.appendChild(tr);
+        const form = document.getElementById('relatoriosForm');
+        const editIndexInput = document.getElementById('editIndex');
+
+        function renderRelatorios() {
+            tbody.innerHTML = '';
+            relatorios.forEach((relatorio, index) => {
+                const tdData = document.createElement('td');
+                tdData.textContent = relatorio.data;
+                const tr = document.createElement('tr');
+                const tdNome = document.createElement('td');
+                tdNome.textContent = relatorio.nome;
+                const tdValor = document.createElement('td');
+                tdValor.textContent = relatorio.tipo === 'saida' ? `-R$${relatorio.valor}` : `R$${relatorio.valor}`;
+                const tdFormaPagamento = document.createElement('td');
+                tdFormaPagamento.textContent = relatorio.formaPagamento;
+                const tdTipo = document.createElement('td');
+                tdTipo.textContent = relatorio.tipo;
+
+                const tdAcoes = document.createElement('td');
+                const btnEdit = document.createElement('button');
+                btnEdit.textContent = 'Editar';
+                btnEdit.addEventListener('click', () => editRelatorio(index));
+                const btnDelete = document.createElement('button');
+                btnDelete.textContent = 'Remover';
+                btnDelete.addEventListener('click', () => deleteRelatorio(index));
+
+                tdAcoes.appendChild(btnEdit);
+                tdAcoes.appendChild(btnDelete);
+                tr.appendChild(tdData);
+                tr.appendChild(tdNome);
+                tr.appendChild(tdValor);
+                tr.appendChild(tdFormaPagamento);
+                tr.appendChild(tdTipo);
+                tr.appendChild(tdAcoes);
+                tbody.appendChild(tr);
+            });
+            localStorage.setItem('relatorios', JSON.stringify(relatorios));
+        }
+
+        function editRelatorio(index) {
+            const relatorio = relatorios[index];
+            document.getElementById('data').value = relatorio.data;
+            document.getElementById('nome').value = relatorio.nome;
+            document.getElementById('valor').value = relatorio.valor;
+            document.getElementById('formaPagamento').value = relatorio.formaPagamento;
+            document.getElementById('tipo').value = relatorio.tipo;
+            editIndexInput.value = index;
+        }
+
+        function deleteRelatorio(index) {
+            relatorios.splice(index, 1);
+            renderRelatorios();
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const data = document.getElementById('data').value;
+            const nome = document.getElementById('nome').value;
+            const valor = document.getElementById('valor').value;
+            const formaPagamento = document.getElementById('formaPagamento').value;
+            const tipo = document.getElementById('tipo').value;
+
+            const relatorio = { data, nome, valor, formaPagamento, tipo };
+            const editIndex = editIndexInput.value;
+
+            if (editIndex) {
+                relatorios[editIndex] = relatorio;
+                editIndexInput.value = '';
+            } else {
+                relatorios.push(relatorio);
+            }
+
+            form.reset();
+            renderRelatorios();
         });
+
+        renderRelatorios();
     });
 </script>
