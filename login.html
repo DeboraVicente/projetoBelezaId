@@ -23,10 +23,10 @@
     <main>
         <form id="loginForm">
             <aria-label for="username">Usuário</aria-label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="usuario" name="usuario" required>
 
             <aria-label for="password">Senha</aria-label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="senha" name="senha" required>
 
             <aria-label for="role">Tipo de Usuário</aria-label>
             <select id="role" name="role" required>
@@ -34,7 +34,7 @@
                 <option value="cliente">Cliente</option>
             </select>
 
-            <input type="submit" value="Login">
+            <input type="submit" value="Entrar">
         </form>
 
     </main>
@@ -49,11 +49,15 @@
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (event) {
         event.preventDefault();
+        const usuario = document.getElementById('usuario').value;
+        const senha = document.getElementById('senha').value;
         const role = document.getElementById('role').value;
+
+        localStorage.setItem('usuarioLogado', JSON.stringify({ usuario, senha }));
         if (role === 'admin') {
             window.location.href = 'admin_dashboard.html';
         } else {
-            window.location.href = 'belezaId.html';
+            window.location.href = 'agendamento_cliente.html';
         }
     });
 </script>

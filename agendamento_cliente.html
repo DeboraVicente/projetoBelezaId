@@ -21,34 +21,34 @@
     <main>
         <form id="agendamentoForm">
             <h1>Agendar Procedimento</h1>
-            <aria-label for="cliente">Nome do Cliente</aria-label>
+            <label for="cliente">Nome do Cliente</label>
             <input type="text" id="cliente" name="cliente" required>
 
-            <aria-label for="telefone">Telefone</aria-label>
+            <label for="telefone">Telefone</label>
             <input type="tel" id="telefone" name="telefone" required>
 
-            <aria-label for="data">Data</aria-label>
+            <label for="data">Data</label>
             <input type="date" id="data" name="data" required>
 
-            <aria-label for="hora">Hora</aria-label>
+            <label for="hora">Hora</label>
             <input type="time" id="hora" name="hora" required>
 
-            <aria-label for="procedimento">Procedimento</aria-label>
+            <label for="procedimento">Procedimento</label>
             <select id="procedimento" name="procedimento" required></select>
 
-            <aria-label for="funcionario">Funcionário</aria-label>
+            <label for="funcionario">Funcionário</label>
             <select id="funcionario" name="funcionario" required></select>
 
-            <aria-label for="deficiencia">Possui deficiencia?</aria-label>
-            </br>
-            <input type="radio" id="deficienciaSim" name="deficienciaSim" value="sim">Sim
-            <input type="radio" id="deficienciaNao" name="deficienciaNao" value="nao">Não
-            </br>
+            <label>Possui deficiência?</label>
+            <br>
+            <input type="radio" id="deficienciaSim" name="deficiencia" value="sim"> Sim
+            <input type="radio" id="deficienciaNao" name="deficiencia" value="nao"> Não
+            <br>
             <input type="text" id="descricaoDeficiencia" name="descricaoDeficiencia"
-                placeholder="Descreva a deficiencia" required>
-            </br>
+                placeholder="Descreva a deficiência" style="display: none;">
+            <br>
 
-            <aria-label for="formaPagamento">Forma de Pagamento</aria-label>
+            <label for="formaPagamento">Forma de Pagamento</label>
             <select id="formaPagamento" name="formaPagamento" required>
                 <option value="cartao">Cartão Débito</option>
                 <option value="credito">Cartão Crédito</option>
@@ -58,6 +58,23 @@
 
             <input type="submit" value="Agendar">
         </form>
+
+        <h2>Meus Agendamentos</h2>
+        <table id="agendamentosTable">
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Telefone</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Procedimento</th>
+                    <th>Funcionário</th>
+                    <th>Deficiência</th>
+                    <th>Forma de Pagamento</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </main>
 
     <footer>
@@ -69,6 +86,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+        if (!usuarioLogado) {
+            alert('Você precisa estar logado para agendar.');
+            window.location.href = 'login.html';
+            return;
+        }
+
         const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
         const procedimentoSelect = document.getElementById('procedimento');
         procedimentos.forEach(proc => {
@@ -77,6 +101,7 @@
             option.textContent = `${proc.nome} - R$ ${proc.preco}`;
             procedimentoSelect.appendChild(option);
         });
+
         const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
         const funcionarioSelect = document.getElementById('funcionario');
         funcionarios.forEach(func => {
@@ -85,11 +110,14 @@
             option.textContent = func.nome;
             funcionarioSelect.appendChild(option);
         });
+
+        carregarAgendamentos(usuarioLogado.usuario);
     });
 
     document.getElementById('agendamentoForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
         const cliente = document.getElementById('cliente').value;
         const telefone = document.getElementById('telefone').value;
         const data = document.getElementById('data').value;
@@ -100,6 +128,7 @@
         const formaPagamento = document.getElementById('formaPagamento').value;
 
         const agendamento = {
+            usuario: usuarioLogado.usuario,
             cliente,
             telefone,
             data,
@@ -116,26 +145,44 @@
         localStorage.setItem('agenda', JSON.stringify(agenda));
 
         alert('Agendamento salvo com sucesso!');
+        carregarAgendamentos(usuarioLogado.usuario);
     });
 
-    const deficienciaSim = document.getElementById('deficienciaSim');
-    const deficienciaNao = document.getElementById('deficienciaNao');
-    const descricaoDeficiencia = document.getElementById('descricaoDeficiencia');
-
     function verificarDeficiencia() {
-        if (deficienciaSim.checked) {
+        const descricaoDeficiencia = document.getElementById('descricaoDeficiencia');
+        if (document.getElementById('deficienciaSim').checked) {
             descricaoDeficiencia.style.display = 'block';
             descricaoDeficiencia.setAttribute('required', 'required');
         } else {
             descricaoDeficiencia.style.display = 'none';
             descricaoDeficiencia.removeAttribute('required');
-            descricaoDeficiencia.value = ''; 
+            descricaoDeficiencia.value = '';
         }
     }
 
-    // Adiciona eventos de mudança
-    deficienciaSim.addEventListener('change', verificarDeficiencia);
-    deficienciaNao.addEventListener('change', verificarDeficiencia);
+    document.getElementById('deficienciaSim').addEventListener('change', verificarDeficiencia);
+    document.getElementById('deficienciaNao').addEventListener('change', verificarDeficiencia);
 
+    function carregarAgendamentos(usuario) {
+        const agenda = JSON.parse(localStorage.getItem('agenda')) || [];
+        const tabela = document.getElementById('agendamentosTable').querySelector('tbody');
+        tabela.innerHTML = '';
 
+        const agendamentosUsuario = agenda.filter(agendamento => agendamento.usuario === usuario);
+
+        agendamentosUsuario.forEach(agendamento => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${agendamento.cliente}</td>
+                <td>${agendamento.telefone}</td>
+                <td>${agendamento.data}</td>
+                <td>${agendamento.hora}</td>
+                <td>${agendamento.procedimento}</td>
+                <td>${agendamento.funcionario}</td>
+                <td>${agendamento.descricaoDeficiencia}</td>
+                <td>${agendamento.formaPagamento}</td>
+            `;
+            tabela.appendChild(row);
+        });
+    }
 </script>
