@@ -20,7 +20,10 @@
         </nav>
     </header>
     <main>
-        <h1>Funcionários</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; color: #4B0082;">Funcionários</h2>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+        </div>
         <section id="funcionariosList">
             <table id="funcionariosTable">
                 <thead>
@@ -46,19 +49,36 @@
     document.addEventListener('DOMContentLoaded', function () {
         const funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
         const tbody = document.getElementById('funcionariosTbody');
-        tbody.innerHTML = '';
-        funcionarios.forEach(funcionario => {
-            const tr = document.createElement('tr');
-            const tdNome = document.createElement('td');
-            tdNome.textContent = funcionario.nome;
-            const tdCargo = document.createElement('td');
-            tdCargo.textContent = funcionario.cargo;
-            const tdHorarios = document.createElement('td');
-            tdHorarios.textContent = `${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}`;
-            tr.appendChild(tdNome);
-            tr.appendChild(tdCargo);
-            tr.appendChild(tdHorarios);
-            tbody.appendChild(tr);
-        });
+        const pesquisaInput = document.getElementById('pesquisaInput');
+
+        function renderTabela(funcionariosFiltrados) {
+            tbody.innerHTML = '';
+            funcionariosFiltrados.forEach(funcionario => {
+                const tr = document.createElement('tr');
+                const tdNome = document.createElement('td');
+                tdNome.textContent = funcionario.nome;
+                const tdCargo = document.createElement('td');
+                tdCargo.textContent = funcionario.cargo;
+                const tdHorarios = document.createElement('td');
+                tdHorarios.textContent = `${funcionario.horario1} ${funcionario.horario2 ? ' / ' + funcionario.horario2 : ''}`;
+                tr.appendChild(tdNome);
+                tr.appendChild(tdCargo);
+                tr.appendChild(tdHorarios);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filtrarFuncionarios() {
+            const termoPesquisa = pesquisaInput.value.toLowerCase();
+            const funcionariosFiltrados = funcionarios.filter(funcionario => 
+                funcionario.nome.toLowerCase().includes(termoPesquisa) || 
+                funcionario.cargo.toLowerCase().includes(termoPesquisa)
+            );
+            renderTabela(funcionariosFiltrados);
+        }
+
+        pesquisaInput.addEventListener('input', filtrarFuncionarios);
+
+        renderTabela(funcionarios);
     });
 </script>

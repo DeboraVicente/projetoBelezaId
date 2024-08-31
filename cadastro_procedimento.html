@@ -35,7 +35,10 @@
         </form>
 
         <section id="procedimentosList">
-            <h2>Procedimentos Cadastrados</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; color: #4B0082;">Procedimentos Cadastrados</h2>
+                <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+            </div>
             <table id="procedimentosTable">
                 <thead>
                     <tr>
@@ -71,11 +74,11 @@
         listarProcedimentos();
     });
 
-    function listarProcedimentos() {
+    function listarProcedimentos(procedimentosFiltrados = null) {
         const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
         const tbody = document.getElementById('procedimentosTbody');
         tbody.innerHTML = '';
-        procedimentos.forEach((procedimento, index) => {
+        (procedimentosFiltrados || procedimentos).forEach((procedimento, index) => {
             const tr = document.createElement('tr');
             const tdNome = document.createElement('td');
             tdNome.textContent = procedimento.nome;
@@ -124,6 +127,17 @@
             listarProcedimentos();
         }
     }
+
+    function filtrarProcedimentos() {
+        const termoPesquisa = document.getElementById('pesquisaInput').value.toLowerCase();
+        let procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
+        const procedimentosFiltrados = procedimentos.filter(procedimento =>
+            procedimento.nome.toLowerCase().includes(termoPesquisa)
+        );
+        listarProcedimentos(procedimentosFiltrados);
+    }
+
+    document.getElementById('pesquisaInput').addEventListener('input', filtrarProcedimentos);
 
     window.onload = listarProcedimentos;
 </script>

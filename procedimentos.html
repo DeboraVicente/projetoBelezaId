@@ -20,7 +20,10 @@
         </nav>
     </header>
     <main>
-        <h1>Procedimentos Disponíveis</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; color: #4B0082;">Procedimentos Disponíveis</h2>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+        </div>
         <section id="procedimentosList">
             <table id="procedimentosTable">
                 <thead>
@@ -45,16 +48,32 @@
     document.addEventListener('DOMContentLoaded', function () {
         const procedimentos = JSON.parse(localStorage.getItem('procedimentos')) || [];
         const tbody = document.getElementById('procedimentosTbody');
-        tbody.innerHTML = '';
-        procedimentos.forEach(procedimento => {
-            const tr = document.createElement('tr');
-            const tdNome = document.createElement('td');
-            tdNome.textContent = procedimento.nome;
-            const tdPreco = document.createElement('td');
-            tdPreco.textContent = `R$ ${procedimento.preco}`;
-            tr.appendChild(tdNome);
-            tr.appendChild(tdPreco);
-            tbody.appendChild(tr);
-        });
+        const pesquisaInput = document.getElementById('pesquisaInput');
+
+        function renderTabela(procedimentosFiltrados) {
+            tbody.innerHTML = '';
+            procedimentosFiltrados.forEach(procedimento => {
+                const tr = document.createElement('tr');
+                const tdNome = document.createElement('td');
+                tdNome.textContent = procedimento.nome;
+                const tdPreco = document.createElement('td');
+                tdPreco.textContent = `R$ ${procedimento.preco}`;
+                tr.appendChild(tdNome);
+                tr.appendChild(tdPreco);
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filtrarProcedimentos() {
+            const termoPesquisa = pesquisaInput.value.toLowerCase();
+            const procedimentosFiltrados = procedimentos.filter(procedimento => 
+                procedimento.nome.toLowerCase().includes(termoPesquisa)
+            );
+            renderTabela(procedimentosFiltrados);
+        }
+
+        pesquisaInput.addEventListener('input', filtrarProcedimentos);
+
+        renderTabela(procedimentos);
     });
 </script>

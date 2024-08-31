@@ -47,7 +47,10 @@
             <input type="submit"></input>
         </form>
 
-        <h2>Fluxo de caixa </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; color: #4B0082;">Fluxo de caixa</h2>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+        </div>
         <section id="relatoriosList">
             <table id="relatoriosTable">
                 <thead>
@@ -73,89 +76,110 @@
 </html>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const relatorios = JSON.parse(localStorage.getItem('relatorios')) || [];
-        const tbody = document.getElementById('relatoriosTbody');
-        const form = document.getElementById('relatoriosForm');
-        const editIndexInput = document.getElementById('editIndex');
+document.addEventListener('DOMContentLoaded', function () {
+    const relatorios = JSON.parse(localStorage.getItem('relatorios')) || [];
+    const tbody = document.getElementById('relatoriosTbody');
+    const form = document.getElementById('relatoriosForm');
+    const editIndexInput = document.getElementById('editIndex');
+    const pesquisaInput = document.getElementById('pesquisaInput');
 
-        function renderRelatorios() {
-            tbody.innerHTML = '';
-            relatorios.forEach((relatorio, index) => {
-                const tdData = document.createElement('td');
-                tdData.textContent = relatorio.data;
-                const tr = document.createElement('tr');
-                const tdNome = document.createElement('td');
-                tdNome.textContent = relatorio.nome;
-                const tdValor = document.createElement('td');
-                tdValor.textContent = relatorio.tipo === 'saida' ? `-R$${relatorio.valor}` : `R$${relatorio.valor}`;
-                const tdFormaPagamento = document.createElement('td');
-                tdFormaPagamento.textContent = relatorio.formaPagamento;
-                const tdTipo = document.createElement('td');
-                tdTipo.textContent = relatorio.tipo;
+    function renderRelatorios(pesquisa = '') {
+        tbody.innerHTML = '';
 
-                const tdAcoes = document.createElement('td');
-                const btnEdit = document.createElement('button');
-                btnEdit.textContent = 'Editar';
-                btnEdit.classList.add('acoes', 'btn');
-                btnEdit.addEventListener('click', () => editRelatorio(index));
-                const btnDelete = document.createElement('button');
-                btnDelete.textContent = 'Remover';
-                btnDelete.classList.add('acoes', 'btn');
-                btnDelete.addEventListener('click', () => deleteRelatorio(index));
+        // Filtra os relatórios com base no termo de pesquisa
+        const relatoriosFiltrados = relatorios.filter(relatorio => 
+            relatorio.nome.toLowerCase().includes(pesquisa.toLowerCase()) || 
+            relatorio.formaPagamento.toLowerCase().includes(pesquisa.toLowerCase()) ||
+            relatorio.tipo.toLowerCase().includes(pesquisa.toLowerCase())
+        );
 
-                tdAcoes.appendChild(btnEdit);
-                tdAcoes.appendChild(btnDelete);
-                tr.appendChild(tdData);
-                tr.appendChild(tdNome);
-                tr.appendChild(tdValor);
-                tr.appendChild(tdFormaPagamento);
-                tr.appendChild(tdTipo);
-                tr.appendChild(tdAcoes);
-                tbody.appendChild(tr);
-            });
-            localStorage.setItem('relatorios', JSON.stringify(relatorios));
-        }
+        relatoriosFiltrados.forEach((relatorio, index) => {
+            const tr = document.createElement('tr');
 
-        function editRelatorio(index) {
-            const relatorio = relatorios[index];
-            document.getElementById('data').value = relatorio.data;
-            document.getElementById('nome').value = relatorio.nome;
-            document.getElementById('valor').value = relatorio.valor;
-            document.getElementById('formaPagamento').value = relatorio.formaPagamento;
-            document.getElementById('tipo').value = relatorio.tipo;
-            editIndexInput.value = index;
-        }
+            const tdData = document.createElement('td');
+            tdData.textContent = relatorio.data;
+            tr.appendChild(tdData);
 
-        function deleteRelatorio(index) {
-            if (confirm('Tem certeza que deseja remover este pagamento?')) {
-                relatorios.splice(index, 1);
-                renderRelatorios();
-            }
-        }
+            const tdNome = document.createElement('td');
+            tdNome.textContent = relatorio.nome;
+            tr.appendChild(tdNome);
 
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const data = document.getElementById('data').value;
-            const nome = document.getElementById('nome').value;
-            const valor = document.getElementById('valor').value;
-            const formaPagamento = document.getElementById('formaPagamento').value;
-            const tipo = document.getElementById('tipo').value;
+            const tdValor = document.createElement('td');
+            tdValor.textContent = relatorio.tipo === 'saida' ? `-R$${relatorio.valor}` : `R$${relatorio.valor}`;
+            tr.appendChild(tdValor);
 
-            const relatorio = { data, nome, valor, formaPagamento, tipo };
-            const editIndex = editIndexInput.value;
+            const tdFormaPagamento = document.createElement('td');
+            tdFormaPagamento.textContent = relatorio.formaPagamento;
+            tr.appendChild(tdFormaPagamento);
 
-            if (editIndex) {
-                relatorios[editIndex] = relatorio;
-                editIndexInput.value = '';
-            } else {
-                relatorios.push(relatorio);
-            }
+            const tdTipo = document.createElement('td');
+            tdTipo.textContent = relatorio.tipo;
+            tr.appendChild(tdTipo);
 
-            form.reset();
-            renderRelatorios();
+            const tdAcoes = document.createElement('td');
+            const btnEdit = document.createElement('button');
+            btnEdit.textContent = 'Editar';
+            btnEdit.classList.add('acoes', 'btn');
+            btnEdit.addEventListener('click', () => editRelatorio(index));
+            tdAcoes.appendChild(btnEdit);
+
+            const btnDelete = document.createElement('button');
+            btnDelete.textContent = 'Remover';
+            btnDelete.classList.add('acoes', 'btn');
+            btnDelete.addEventListener('click', () => deleteRelatorio(index));
+            tdAcoes.appendChild(btnDelete);
+
+            tr.appendChild(tdAcoes);
+            tbody.appendChild(tr);
         });
 
-        renderRelatorios();
+        localStorage.setItem('relatorios', JSON.stringify(relatorios));
+    }
+
+    function editRelatorio(index) {
+        const relatorio = relatorios[index];
+        document.getElementById('data').value = relatorio.data;
+        document.getElementById('nome').value = relatorio.nome;
+        document.getElementById('valor').value = relatorio.valor;
+        document.getElementById('formaPagamento').value = relatorio.formaPagamento;
+        document.getElementById('tipo').value = relatorio.tipo;
+        editIndexInput.value = index;
+    }
+
+    function deleteRelatorio(index) {
+        if (confirm('Tem certeza que deseja remover este pagamento?')) {
+            relatorios.splice(index, 1);
+            renderRelatorios(pesquisaInput.value);
+        }
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = document.getElementById('data').value;
+        const nome = document.getElementById('nome').value;
+        const valor = document.getElementById('valor').value;
+        const formaPagamento = document.getElementById('formaPagamento').value;
+        const tipo = document.getElementById('tipo').value;
+
+        const relatorio = { data, nome, valor, formaPagamento, tipo };
+        const editIndex = editIndexInput.value;
+
+        if (editIndex) {
+            relatorios[editIndex] = relatorio;
+            editIndexInput.value = '';
+        } else {
+            relatorios.push(relatorio);
+        }
+
+        form.reset();
+        renderRelatorios(pesquisaInput.value);
     });
+
+    // Adiciona o evento de input para filtrar os relatórios conforme o usuário digita
+    pesquisaInput.addEventListener('input', function () {
+        renderRelatorios(this.value);
+    });
+
+    renderRelatorios();
+});
 </script>

@@ -44,7 +44,10 @@
             <input type="submit" value="Cadastrar Funcionário">
         </form>
 
-        <h2>Funcionários Cadastrados</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; color: #4B0082;">Funcionários Cadastrados</h2>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+        </div>
         <table id="funcionariosTable">
             <thead>
                 <tr>
@@ -70,11 +73,12 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('funcionarioForm');
         const tabela = document.getElementById('funcionariosTable').querySelector('tbody');
+        const pesquisaInput = document.getElementById('pesquisaInput');
         let funcionarios = JSON.parse(localStorage.getItem('funcionarios')) || [];
 
-        function renderTabela() {
+        function renderTabela(funcionariosFiltrados) {
             tabela.innerHTML = '';
-            funcionarios.forEach((funcionario, index) => {
+            funcionariosFiltrados.forEach((funcionario, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${funcionario.nome}</td>
@@ -88,6 +92,16 @@
                 `;
                 tabela.appendChild(row);
             });
+        }
+
+        function filtrarFuncionarios() {
+            const termoPesquisa = pesquisaInput.value.toLowerCase();
+            const funcionariosFiltrados = funcionarios.filter(funcionario => 
+                funcionario.nome.toLowerCase().includes(termoPesquisa) || 
+                funcionario.telefone.toLowerCase().includes(termoPesquisa) ||
+                funcionario.cargo.toLowerCase().includes(termoPesquisa)
+            );
+            renderTabela(funcionariosFiltrados);
         }
 
         form.addEventListener('submit', function (event) {
@@ -111,9 +125,11 @@
 
             localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
             form.reset();
-            renderTabela();
+            renderTabela(funcionarios);
             alert('Funcionário cadastrado ou atualizado com sucesso!');
         });
+
+        pesquisaInput.addEventListener('input', filtrarFuncionarios);
 
         window.editarFuncionario = function (index) {
             const funcionario = funcionarios[index];
@@ -129,10 +145,10 @@
             if (confirm('Tem certeza que deseja remover este funcionário?')) {
                 funcionarios.splice(index, 1);
                 localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-                renderTabela();
+                renderTabela(funcionarios);
             }
         };
 
-        renderTabela();
+        renderTabela(funcionarios);
     });
 </script>

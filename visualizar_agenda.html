@@ -22,7 +22,10 @@
         </nav>
     </header>
     <main>
-        <h1>Agenda de Agendamentos</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; color: #4B0082;">Agenda de Agendamentos</h2>
+            <input type="text" id="pesquisaInput" placeholder="Pesquisar..." style="padding: 5px; width: 200px;">
+        </div>
         <section id="agendaList">
             <table id="agendaTable">
                 <thead>
@@ -51,11 +54,20 @@
     <script>
         let agenda = JSON.parse(localStorage.getItem('agenda')) || [];
 
-        function renderizarTabela() {
+        function renderizarTabela(pesquisa = '') {
             const tabela = document.getElementById('agendaTable').getElementsByTagName('tbody')[0];
             tabela.innerHTML = ''; // Limpa a tabela
 
-            agenda.forEach((agendamento, index) => {
+            const agendaFiltrada = agenda.filter(agendamento =>
+                agendamento.cliente.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                agendamento.telefone.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                agendamento.procedimento.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                agendamento.funcionario.toLowerCase().includes(pesquisa.toLowerCase()) ||
+                agendamento.data.includes(pesquisa) ||
+                agendamento.hora.includes(pesquisa)
+            );
+
+            agendaFiltrada.forEach((agendamento, index) => {
                 // Cria a linha para o agendamento
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -80,7 +92,6 @@
                     const index = this.getAttribute('data-index');
                     excluirAgendamento(index);
                 });
-
             });
 
             document.querySelectorAll('.confirmar-btn').forEach(button => {
@@ -107,6 +118,10 @@
             const url = `https://api.whatsapp.com/send?phone=${telefone}&text=${encodeURIComponent(mensagem)}`;
             window.open(url, '_blank');
         }
+
+        document.getElementById('pesquisaInput').addEventListener('input', function () {
+            renderizarTabela(this.value);
+        });
 
         document.addEventListener('DOMContentLoaded', renderizarTabela);
     </script>
